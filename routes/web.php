@@ -1,16 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\MainController;
-use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AjaxUploadMultipleImageController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\MainController;
 use App\Http\Controllers\NewController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\RequestContactController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\WorkController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +41,9 @@ Route::name('requests.')->group(function(){
 
     Route::post('/work/{id}', [RequestController::class, 'workNew'])
         ->name('work');
+
+    Route::post('/work/{id}/review', [ReviewController::class, 'add'])
+        ->name('work.review');
 
     Route::post('/news/{id}/comment', [RequestController::class, 'commentNew'])
         ->name('comment');
@@ -89,9 +95,29 @@ Route::name('work.')->group(function(){
         ->name('page');
 });
 
+Route::get('/category/{id}', [CategoryController::class, 'page'])
+    ->whereNumber('id')
+    ->name('category.page');
+
 Route::match(["POST", "GET"], '/payments/callback', [PaymentController::class, 'callback'])
     ->name('payment.callback');
 Route::post('/payments/create/{id}', [PaymentController::class, 'create'])
     ->name('payment.create');
 Route::get('/payments', [PaymentController::class, 'index'])
     ->name('payment.index');
+
+Route::post('/wishlist/add', [WishlistController::class, 'add'])
+    ->name('wishlist.add');
+Route::post('/wishlist/remove', [WishlistController::class, 'remove'])
+    ->name('wishlist.remove');
+
+Route::get('/categories/popular', [CategoryController::class, 'getPopular'])
+    ->name('categories.popular');
+
+Route::get('multiple-image-preview', [AjaxUploadMultipleImageController::class, 'index']);
+Route::post('upload-multiple-image-ajax', [AjaxUploadMultipleImageController::class, 'saveUpload']);
+
+Route::post('/search', [SearchController::class, 'searchCategoryAndWork'])
+    ->name('search.category-work');
+
+require __DIR__.'/auth.php';

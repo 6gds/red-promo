@@ -5,11 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\ModelGet;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Work extends Model
 {
     use HasFactory;
     use ModelGet;
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'wishlist', 'work_id', 'user_id');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(WorkReview::class, 'work_id', 'id');
+    }
 
     public function items()
     {
